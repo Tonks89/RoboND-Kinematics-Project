@@ -49,6 +49,9 @@ def handle_calculate_IK(req):
 
             # Create individual transformation matrices
 
+	    # - individual transform matrices about each joint using the DH table
+	    # - trans base_link to gripper_link using only the position and orientation of the gripper_link.
+	    # - do last frame correction?
 
             
             # Extract end-effector position and orientation from request
