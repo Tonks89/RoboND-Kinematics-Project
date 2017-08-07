@@ -224,12 +224,27 @@ Then, the angles were determined using this information along side the robot's g
 
 * Theta1 computation (drawings, code formulas)
 
-![](https://latex.codecogs.com/svg.latex?tan%5E%7B-1%7D%28w_%7By%7D/w_%7Bx%7D%29)
+  ![](https://latex.codecogs.com/gif.latex?theta1%3D%20%5Ctan%20%5E%7B-1%7D%28wy/wx%29)
+
 
 * Theta2 computation
 
+  ![](https://latex.codecogs.com/gif.latex?theta2%20%3D%20pi/2%20-%20A%20-%20alp1)
 
+  First, the sides of the auxiliary triangle 1 and 2 are computed:
+  ![](https://latex.codecogs.com/gif.latex?a%20%3D%20%5Csqrt%7Bd4%5E%7B2%7D%20&plus;%20a3%5E%7B2%7D%7D)
 
+  ![](https://latex.codecogs.com/gif.latex?s1%20%3D%20wz%20-%20d1)
+  ![](https://latex.codecogs.com/gif.latex?s2%20%3D%20%5Csqrt%7Bwx%5E2%20&plus;%20wy%5E2%20%7D%20-%20a1)
+  ![](https://latex.codecogs.com/gif.latex?b%20%3D%20%5Csqrt%7Bs2%5E2%20&plus;%20s1%5E2%7D)
+
+  ![](https://latex.codecogs.com/gif.latex?c%20%3D%20a2)
+
+  Then, the angles of interest are computed
+  ![](https://latex.codecogs.com/gif.latex?alp1%20%3D%20%5Ctan%5E%7B-1%7D%28s1/s2%29)
+  ![](https://latex.codecogs.com/gif.latex?A%20%3D%20%5Ccos%5E%7B-1%7D%28%28b%5E2%20&plus;%20c%5E2%20-%20a%5E2%29/%282bc%29%29)
+  ![](https://latex.codecogs.com/gif.latex?B%20%3D%20%5Ccos%5E%7B-1%7D%28%28c%5E2%20&plus;%20a%5E2%20-%20b%5E2%29/%282ac%29%29)
+  ![](https://latex.codecogs.com/gif.latex?C%20%3D%20%5Ccos%5E%7B-1%7D%28%28a%5E2%20&plus;%20b%5E2%20-%20c%5E2%29/%282ab%29%29)
 
 * Theta3 computation
 
