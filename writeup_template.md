@@ -269,7 +269,7 @@ Equating the unknown terms on the RHS (right hand side) to the known terms on th
 ---
 ## Project Implementation
 
-The previous analysis was implemented as a python script: **IK_server.py**. A script which calculates the joint trajectories corresponding to desired end-effector poses. The code is divided into thwo main sections: forward kinematics and inverse kinematics.
+The previous analysis was implemented as a python script: **IK_server.py**. A script which calculates the joint trajectories corresponding to desired end-effector poses. The code is divided into two main sections: forward kinematics and inverse kinematics.
 
 * The forward kinematics section contains the implementation of PART 1 (Robot geometry and DH parameters) and PART 2 (Forward Kinematic Model (FKM)) of the previous analysis.
 * The inverse kinematics section contains the implementation of PART 3 (Inverse Kinematic Model (IKM)) of the previous analysis. Additionally, this part of the code also checks for the following special cases:
@@ -277,6 +277,8 @@ The previous analysis was implemented as a python script: **IK_server.py**. A sc
     1. If a wrist singularity occured (when theta5 = 0, and theta4 and 6 become collinear): When this happens the values of joint 4 and 6 cannot be determined separately, only their sum (theta46). Thus, theta4 is assigned its previous value and theta6 is set to theta46 minus the  current value of theta4. 
     2. If the sine of theta5 is positive or negative, as this influences the computation of theta4 and theta6.
     3. If the angular displacement from one joint position to the next is too large (greater or less than +/- 180 degrees):  When this happens the shortest displacement to the desired joint position is computed and added to the current joint position.
+
+The following code shows this special cases checking:
 
 
 ``` python
@@ -298,8 +300,7 @@ if (theta5 == 0):
 
 # Check large angular displacements
 delta_4 = theta4 - theta4_prev # compute displacement to new angle
-delta_5 = theta5 - theta5_prev
-delta_6 = theta6 - theta6_prev
+...
 
 while delta_4 > pi:                          # check if displacement to large
     theta4 = theta4_prev + (delta_4  - 2*pi) # if so, compute shorter displacement to same point
@@ -307,18 +308,20 @@ while delta_4 > pi:                          # check if displacement to large
     print("delta_4 > pi")
 while(delta_4  < -pi):
     theta4 = theta4_prev + (delta_4  + 2*pi)
-    delta_4 = theta4 - theta4_prev # 
+    delta_4 = theta4 - theta4_prev  
     print("delta_4 < -pi")
+
+...
 
 ```
 
-To validate the results of this project the robot was tested in 10 pick and place operations (spawn location 1-9, # was repeated). The results show that the robot is able to successfully pick and place the objects *#/10* times while following the desired end-effector trajectories.
+To validate the results of this project the robot was tested in 10 pick and place operations (spawn locations 1-9, # was repeated). The results show that the robot is able to successfully pick and place the objects *#/10* times while following the desired end-effector trajectories.
 Click here, to see an example of a pick and place operation.
 
 However, there are a number of improvements that I still wish to implement:
 
 * Reduce unecessary end-effector rotations: Although I check for large and uncessary angular displacements, the robot still exhibits some unecessary rotations, especially in the beginning. I will keep checking and improving this part of the code.
-* In 2/10 occasions the orientation of the robot did not reach the desired end-effector pose at the dropping site. I still need to determine the cause of this. I noticed in both occasions my code for checking large angular displacements was executed, so I'll try to determine if the error happens here or somewhere else.
+* In 2/10 occasions the orientation of the robot did not reach the desired end-effector pose at the dropping site. I still need to determine the cause of this. I noticed in both occasions the code for checking large angular displacements was executed, so I'll try to determine if the error happens here or somewhere else.
 
 Other improvements I would like to make:
 * Optimize the code to make it faster
