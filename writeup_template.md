@@ -224,7 +224,7 @@ Then, the angles were determined using this information along side the robot's g
 
 * Theta1 computation (drawings, code formulas)
 
-https://latex.codecogs.com/svg.latex?tan%5E%7B-1%7D%28w_%7By%7D/w_%7Bx%7D%29
+![](https://latex.codecogs.com/svg.latex?tan%5E%7B-1%7D%28w_%7By%7D/w_%7Bx%7D%29)
 
 * Theta2 computation
 
