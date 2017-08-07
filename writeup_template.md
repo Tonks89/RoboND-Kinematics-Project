@@ -1,67 +1,288 @@
-## Project: Kinematics Pick & Place
-### Writeup Template: You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+# Project: Kinematics Pick & Place
 
 ---
-
-
-**Steps to complete the project:**  
-
-
-1. Set up your ROS Workspace.
-2. Download or clone the [project repository](https://github.com/udacity/RoboND-Kinematics-Project) into the ***src*** directory of your ROS Workspace.  
-3. Experiment with the forward_kinematics environment and get familiar with the robot.
-4. Launch in [demo mode](https://classroom.udacity.com/nanodegrees/nd209/parts/7b2fd2d7-e181-401e-977a-6158c77bf816/modules/8855de3f-2897-46c3-a805-628b5ecf045b/lessons/91d017b1-4493-4522-ad52-04a74a01094c/concepts/ae64bb91-e8c4-44c9-adbe-798e8f688193).
-5. Perform Kinematic Analysis for the robot following the [project rubric](https://review.udacity.com/#!/rubrics/972/view).
-6. Fill in the `IK_server.py` with your Inverse Kinematics code. 
-
 
 [//]: # (Image References)
 
-[image1]: ./misc_images/misc1.png
-[image2]: ./misc_images/misc2.png
-[image3]: ./misc_images/misc3.png
+[pr_image1]: ./misc/pr_image1.png
+[pr_image0]: ./misc/pr_image0.png
+[pr_image2]: ./misc/pr_image2.png
+[pr_image3]: ./misc/pr_image3.png
+[nav_image0]: ./misc/nav_image.png
+[pr_video]: .output/mydata_mapping_final
 
-## [Rubric](https://review.udacity.com/#!/rubrics/972/view) Points
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+## Introduction
+The objective of this project was to write an Inverse Kinematics solver for the KUKA KR210 robot. This solver is responsible for computing the joint angles corresponding to a desired end-effector or gripper trajectory. The algorithm was tested on pick and place operations, consisting of collecting objects from different locations on a shelf and depositing them on a bin.
+
+(image or GIF)
+---
+
+## Kinematic Analysis
+
+### PART 1. Robot geometry and DH parameters
+
+The following scheme shows the Kuka Kuka KR210 and its geometric parameters.
+
+(picture)
+
+In this figure, each joint is assigned an origin (**Oi**) and frame (**Zi** and **Xi**). The position and orientation of each joint from the base to the end-effector is described by a series of geometric parameters (**alpha**, **a**, **d**, **theta**), but only **a** and **d** are depicted here, where:
+
+* The angle **alpha** corresponds to the angle between **Zi-i** and **Zi** along **Xi-1**.
+
+* The distance **a** correponds to the distance between **Zi-1** and **Zi** along **Xi-1**.
+
+* The distance **d** corresponds to the distance between **Xi-1** and **Xi** along **Zi**.
+
+* The angle **theta** (or in the case of revolute joints: joint variable) represents the angle between **Xi-1** and **Xi** along **Zi**.
+
+Such geometric description can also be summed up in a DH parameter table as follows:
+
+i | alpha(i-1) | a(i-1) | d(i) | theta(i)
+--- | --- | --- | --- | ---
+1 | 0 | 0 | d1 | q1
+2 | - pi/2 | a1| 0 | -pi/2 + q2
+3 | 0 | a2 | 0 | q3
+4 |  - pi/2 | a3 | d4 | q4
+5 | pi/2 | 0 | 0 | q5
+6 | -pi/2 | 0 | 0 | q6
+EE | 0 | 0 | d7 | 0
+
+The actual numerical values for these paramaters can be extracted from the robots URDF file.
+This file contains the distances and orientations between joint frames, however, one must be careful when extracting this information, since the the URDF frames do not correspond to our DH convention.
+
+i | alpha(i-1) | a(i-1) | d(i) | theta(i)
+--- | --- | --- | --- | ---
+1 | 0 | 0 | 0.75 | q1
+2 | - pi/2 | 0.35| 0 | -pi/2 + q2
+3 | 0 | 1.25 | 0 | q3
+4 |  - pi/2 | -0.054 | 1.5 | q4
+5 | pi/2 | 0 | 0 | q5
+6 | -pi/2 | 0 | 0 | q6
+EE | 0 | 0 | 0.303 | 0
+
+where:
+
+* d1 was obtained by adding the distance between joint 0 -> 1 and joint 1 -> 2 along Z in the URDF.
+* a1 corresponds to the distance between joint 1 -> 2 along X in the URDF.
+* a2 corresponds to the distance between joint 2 -> 3 along Z in the URDF.
+* a3 corresponds to the distance between joint 3 -> 4 along Z in the URDF.
+* d4 was obtained by adding the distance between joint 3 -> 4 and joint 4 -> 5 along X in the URDF.
+* d7 was obtained by adding the distance between joint 5 -> 6 and joint 6 -> 7 (or gripper joint) along X in the URDF
+
+### PART 2. Forward Kinematic Model (FKM)
+The forward kinematic model consists in expressing the position and orientation (or pose) of the robot's end-effector as function of its joint variables.
+To do this, tranformation matrices compositions (or multiplications) are used. Transformation matrices specify the pose of a joint frame with respect to its predecessor. By multiplying such matrices from the base frame to the end-effector we can obtain its pose expressed in the base frame.
+
+
+#### a) General transformation matrix between two frames
+The general form of these matrices is the following:
+  (-------Formula or Code snippet)
+  
+#### b) Transformation matrices for Kuka KR210
+To calculate these matrices for the Kuka KR210 the following function was implemented:
+
+``` python
+
+    	# Define Modified DH Transformation matrix         
+    	def Trans_mat(alphaj, aj, di, qi):
+             Tj_i = Matrix([ [       cos(qi),            -sin(qi),                0,                 aj],
+			 [sin(qi)*cos(alphaj),  cos(qi)*cos(alphaj),   -sin(alphaj),    -sin(alphaj)*di],  
+			 [sin(qi)*sin(alphaj),  cos(qi)*sin(alphaj),    cos(alphaj),     cos(alphaj)*di],
+			 [         0,                   0,                   0,                  1]])
+             return Tj_i
+```
+
+
+
+Then this function was called several times to construct the tranformation matrix between the joint frame **Ri-1** to **Ri** using the appropriate DH parameters (parameters of row **i** in the DH parameter table). Such matrices are featured below:
+
+T0_1:
+⎡cos(q₁)  -sin(q₁)  0   0  ⎤
+⎢                          ⎥
+⎢sin(q₁)  cos(q₁)   0   0  ⎥
+⎢                          ⎥
+⎢   0        0      1  0.75⎥
+⎢                          ⎥
+⎣   0        0      0   1  ⎦
+
+T1_2:
+⎡sin(q₂)  cos(q₂)   0  0.35⎤
+⎢                          ⎥
+⎢   0        0      1   0  ⎥
+⎢                          ⎥
+⎢cos(q₂)  -sin(q₂)  0   0  ⎥
+⎢                          ⎥
+⎣   0        0      0   1  ⎦
+
+T2_3:
+⎡cos(q₃)  -sin(q₃)  0  1.25⎤
+⎢                          ⎥
+⎢sin(q₃)  cos(q₃)   0   0  ⎥
+⎢                          ⎥
+⎢   0        0      1   0  ⎥
+⎢                          ⎥
+⎣   0        0      0   1  ⎦
+
+T3_4:
+⎡cos(q₄)   -sin(q₄)  0  -0.054⎤
+⎢                             ⎥
+⎢   0         0      1   1.5  ⎥
+⎢                             ⎥
+⎢-sin(q₄)  -cos(q₄)  0    0   ⎥
+⎢                             ⎥
+⎣   0         0      0    1   ⎦
+
+T4_5:
+⎡cos(q₅)  -sin(q₅)  0   0⎤
+⎢                        ⎥
+⎢   0        0      -1  0⎥
+⎢                        ⎥
+⎢sin(q₅)  cos(q₅)   0   0⎥
+⎢                        ⎥
+⎣   0        0      0   1⎦
+
+T5_6:
+⎡cos(q₆)   -sin(q₆)  0  0⎤
+⎢                        ⎥
+⎢   0         0      1  0⎥
+⎢                        ⎥
+⎢-sin(q₆)  -cos(q₆)  0  0⎥
+⎢                        ⎥
+⎣   0         0      0  1⎦
+
+T6_7:
+⎡1  0  0    0  ⎤
+⎢              ⎥
+⎢0  1  0    0  ⎥
+⎢              ⎥
+⎢0  0  1  0.303⎥
+⎢              ⎥
+⎣0  0  0    1  ⎦
+
+
+
+
+
+  
+#### c) FKM model
+Once these matrices were obtained they were multiplied to obtain the pose of the end-effector's frame expressed in the base frame.
+
+``` python
+
+T_FKM = T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_7
+
+```
+
+#### d) Homogenous transformation base and gripper
+This final matrix can also be obtained using solely the end-effectors pose (for instance, when provided by a simulator).
+In this case, we would be given a quaternion representation of the orientation, which would have to be transformed into euler angles, and finally into a homogenous transformation as follows:
+
+``` python
+
+# Extract end-effector position and orientation from request
+# px,py,pz = end-effector position
+# roll, pitch, yaw = end-effector orientation
+px = req.poses[x].position.x
+py = req.poses[x].position.y
+pz = req.poses[x].position.z
+
+(roll, pitch, yaw) = tf.transformations.euler_from_quaternion(
+    [req.poses[x].orientation.x, req.poses[x].orientation.y,
+	    req.poses[x].orientation.z, req.poses[x].orientation.w])
+
+
+# Gripper w.r.t to base (R0_7 or R0_EE)
+    R0_EE = rotz(yaw) * roty(pitch) * rotx(roll) 		      
+
+
+#  Apply correction (urdf frame is different)
+R_corr = rotz(pi) * roty(-pi/2)
+R0_EE = R0_EE * R_corr   
+
+```
+   
+Note that the angles returned by the function **euler_from_quaternion** are extrinsic euler angles corresponding to an XYZ convention. Thus, the composition of matrices for such convention corresponds to rotation around Z (yaw), followed by a rotation around Y (pitch), and a rotation about X (roll).
+
+
+
+### PART 3. Inverse Kinematic Model (IKM)
+The inverse kinematic model consists in computing the joint positions given the position of the end-effector. This part of the analysis is the most important for this project because it will allow us to compute the trajectories in the joint that correspond to the task space trajectories given by the motion planner.
+
+Since the robot has a spherical wrist the IK problem can be divided into two parts: The inverse p0osition kinematics problem and the inverse orientation kinematics problem. The former is used to compute the first three joint values (which determine the position of the end-effector), while the latter is used to compute the last three joint values (which determine the orientation of the end-effector.
+
+#### a) Inverse Position Kinematics
+The first three joint variables (theta1, theta2 and theta3) were computed as follows:
+
+First, the wrist center position was computed, given the end-effector pose:
+
+
+
+Where n represents the z-axis of matrix R0_EE and d_6, d_7 are DH parameters.
+
+
+Then, the angles were determined using this information along side the robot's geometric parameters and trigonometric identities:
+
+* Theta1 computation (drawings, code formulas)
+
+https://latex.codecogs.com/svg.latex?tan%5E%7B-1%7D%28w_%7By%7D/w_%7Bx%7D%29
+
+* Theta2 computation
+
+
+
+
+* Theta3 computation
+
+
+
+
+#### b) Inverse Orientation Kinematics
+The final three angles were computed by substituting the first three angles and the known end-effector pose in the following equation, and the solving form matrix R36. A matrix function of angles theta4, theta5 and theta 6 only.
+(code equation R0gripper)
+(code equation R36)
+
+
+Equating the unknown terms on the RHS (right hand side) to the known terms on the LHS (left hand side) resulted in the following equations: 
+
+* Theta4 computation
+
+
+
+
+* Theta5 computation
+
+
+
+
+
+* Theta6 computation
 
 ---
-### Writeup / README
+## Project Implementation
 
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  
+The previous analysis was implemented as a python script: **IK_server.py**. A script which calculates the joint trajectories corresponding to desired end-effector poses. The code is divided into thwo main sections: forward kinematics and inverse kinematics.
 
-You're reading it!
+* The forward kinematics section contains the implementation of PART 1 (Robot geometry and DH parameters) and PART 2 (Forward Kinematic Model (FKM)) of the previous analysis.
+* The inverse kinematics section contains the implementation of PART 3 (Inverse Kinematic Model (IKM)) of the previous analysis. Additionally, this part of the code also checks for the following special cases:
 
-### Kinematic Analysis
-#### 1. Run the forward_kinematics demo and evaluate the kr210.urdf.xacro file to perform kinematic analysis of Kuka KR210 robot and derive its DH parameters.
+    1. If a wrist singularity occured (when theta5 = 0, and theta4 and 6 become collinear): When this happens the values of joint 4 and 6 cannot be determined separately, only their sum (theta46). Thus, theta4 is assigned its previous value and theta6 is set to theta46 minus the  current value of theta4. 
+    2. If the sine of theta5 is positive or negative, as this influences the computation of theta4 and theta6.
+    3. If the angular displacement from one joint position to the next is too large (greater or less than +/- 180 degrees):  When this happens the shortest displacement to the desired joint position is computed and added to the current joint position.
 
-Here is an example of how to include an image in your writeup.
+(Code add)
 
-![alt text][image1]
+To validate the results of this project the robot was tested in 10 pick and place operations (spawn location 1-9, # was repeated). The results show that the robot is able to successfully pick and place the objects *#/10* times while following the desired end-effector trajectories.
+Click here, to see an example of a pick and place operation.
 
-#### 2. Using the DH parameter table you derived earlier, create individual transformation matrices about each joint. In addition, also generate a generalized homogeneous transform between base_link and gripper_link using only end-effector(gripper) pose.
+However, there are a number of improvements that I still wish to implement:
 
-Here's | A | Snappy | Table
---- | --- | --- | ---
-1 | `highlight` | **bold** | 7.41
-2 | a | b | c
-3 | *italic* | text | 403
-4 | 2 | 3 | abcd
+* Reduce unecessary end-effector rotations: Although I check for large and uncessary angular displacements, the robot still exhibits some unecessary rotations, especially in the beginning. I will keep checking and improving this part of the code.
+* In 2/10 occasions the orientation of the robot did not reach the desired end-effector pose at the dropping site. I still need to determine the cause of this. I noticed in both occasions my code for checking large angular displacements was executed, so I'll try to determine if the error happens here or somewhere else.
 
-#### 3. Decouple Inverse Kinematics problem into Inverse Position Kinematics and inverse Orientation Kinematics; doing so derive the equations to calculate all individual joint angles.
-
-And here's another image! 
-
-![alt text][image2]
-
-### Project Implementation
-
-#### 1. Fill in the `IK_server.py` file with properly commented python code for calculating Inverse Kinematics based on previously performed Kinematic Analysis. Your code must guide the robot to successfully complete 8/10 pick and place cycles. Briefly discuss the code you implemented and your results. 
+Other improvements I would like to make:
+* Optimize the code to make it faster
+* Compute the various IKM solutions for each end-effector position and select the best one (to stay within the robot's reachable workspace, avoid singularities etc.)
 
 
-Here I'll talk about the code, what techniques I used, what worked and why, where the implementation might fail and how I might improve it if I were going to pursue this project further.  
-
-
-And just for fun, another example image:
-![alt text][image3]
 
 
