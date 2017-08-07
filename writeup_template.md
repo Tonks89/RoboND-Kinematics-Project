@@ -37,7 +37,7 @@ In this figure, each joint is assigned an origin (**Oi**) and frame (**Zi** and 
 
 Such geometric description can also be summed up in a DH parameter table as follows:
 
-i | \alpha_{i-1} | a(i-1) | d(i) | theta(i)
+i | alpha(i-1) | a(i-1) | d(i) | theta(i)
 --- | --- | --- | --- | ---
 1 | 0 | 0 | d1 | q1
 2 | - pi/2 | a1| 0 | -pi/2 + q2
@@ -96,7 +96,7 @@ To calculate these matrices for the Kuka KR210 the following function was implem
 
 Then this function was called several times to construct the tranformation matrix between the joint frame **Ri-1** to **Ri** using the appropriate DH parameters (parameters of row **i** in the DH parameter table). Such matrices are featured below:
 
-TO_1:
+T0_1:
 
 ![](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bbmatrix%7D%20cos%28q_1%29%20%26%20-sin%28q_1%29%20%26%200%20%26%200%5C%5C%20sin%28q_1%29%20%26%20cos%28q_1%29%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%201%20%26%200.75%5C%5C%200%26%200%20%26%200%20%26%201%20%5Cend%7Bbmatrix%7D)
 
@@ -184,24 +184,24 @@ Then, the angles were determined using this information along side the robot's g
 
 * Theta1 computation (drawings, code formulas)
 
-  ![](https://latex.codecogs.com/gif.latex?theta1%3D%20%5Ctan%20%5E%7B-1%7D%28wy/wx%29)
+  ![](https://latex.codecogs.com/gif.latex?\theta_1%3D%20%5Ctan%20%5E%7B-1%7D%28w_y/w_x%29)
 
 
 * Theta2 computation
 
-  ![](https://latex.codecogs.com/gif.latex?theta2%20%3D%20pi/2%20-%20A%20-%20alp1)
+  ![](https://latex.codecogs.com/gif.latex?\theta_2%20%3D%20\pi/2%20-%20A%20-%20alp_1)
 
   First, the sides of the auxiliary triangle 1 and 2 are computed:
 
-  ![](https://latex.codecogs.com/gif.latex?a%20%3D%20%5Csqrt%7Bd4%5E%7B2%7D%20&plus;%20a3%5E%7B2%7D%7D)
+  ![](https://latex.codecogs.com/gif.latex?a%20%3D%20%5Csqrt%7Bd_4%5E%7B2%7D%20&plus;%20a_3%5E%7B2%7D%7D)
 
-  ![](https://latex.codecogs.com/gif.latex?s1%20%3D%20wz%20-%20d1)
+  ![](https://latex.codecogs.com/gif.latex?s_1%20%3D%20w_z%20-%20d_1)
 
-  ![](https://latex.codecogs.com/gif.latex?s2%20%3D%20%5Csqrt%7Bwx%5E2%20&plus;%20wy%5E2%20%7D%20-%20a1)
+  ![](https://latex.codecogs.com/gif.latex?s_2%20%3D%20%5Csqrt%7Bw_x%5E2%20&plus;%20w_y%5E2%20%7D%20-%20a_1)
 
-  ![](https://latex.codecogs.com/gif.latex?b%20%3D%20%5Csqrt%7Bs2%5E2%20&plus;%20s1%5E2%7D)
+  ![](https://latex.codecogs.com/gif.latex?b%20%3D%20%5Csqrt%7Bs_2%5E2%20&plus;%20s_1%5E2%7D)
 
-  ![](https://latex.codecogs.com/gif.latex?c%20%3D%20a2)
+  ![](https://latex.codecogs.com/gif.latex?c%20%3D%20a_2)
 
   Then, the angles of interest are computed
 
