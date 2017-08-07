@@ -37,7 +37,7 @@ In this figure, each joint is assigned an origin (**Oi**) and frame (**Zi** and 
 
 Such geometric description can also be summed up in a DH parameter table as follows:
 
-i | alpha(i-1) | a(i-1) | d(i) | theta(i)
+i | \alpha_{i-1} | a(i-1) | d(i) | theta(i)
 --- | --- | --- | --- | ---
 1 | 0 | 0 | d1 | q1
 2 | - pi/2 | a1| 0 | -pi/2 + q2
@@ -76,7 +76,8 @@ To do this, tranformation matrices compositions (or multiplications) are used. T
 
 #### a) General transformation matrix between two frames
 The general form of these matrices is the following:
-  (-------Formula or Code snippet)
+
+![](https://latex.codecogs.com/gif.latex?_%7Bi%7D%5E%7Bi-1%7D%5Ctextrm%7BT%7D%3D%5Cbegin%7Bbmatrix%7D%20cos%28%5Ctheta_i%29%20%26%20-sin%28%5Ctheta_i%29%20%26%200%20%26%20a_%7Bi-1%7D%5C%5C%20sin%28%5Ctheta_i%29cos%28%5Calpha_%7Bi-1%7D%29%20%26%20cos%28%5Ctheta_i%29cos%28%5Calpha_%7Bi-1%7D%29%20%26%20-sin%28%5Calpha_%7Bi-1%7D%29%20%26%20-sin%28%5Calpha_%7Bi-1%7D%29d_%7Bi%7D%20%5C%5C%20sin%28%5Ctheta_i%29sin%28%5Calpha_%7Bi-1%7D%29%20%26%20cos%28%5Ctheta_i%29sin%28%5Calpha_%7Bi-1%7D%29%20%26%20cos%28%5Calpha_%7Bi-1%7D%29%20%26%20cos%28%5Calpha_%7Bi-1%7D%29d_%7Bi%7D%20%5C%5C%200%20%26%200%20%26%200%20%26%201%20%5Cend%7Bbmatrix%7D)
   
 #### b) Transformation matrices for Kuka KR210
 To calculate these matrices for the Kuka KR210 the following function was implemented:
@@ -93,76 +94,35 @@ To calculate these matrices for the Kuka KR210 the following function was implem
 ```
 
 
-
 Then this function was called several times to construct the tranformation matrix between the joint frame **Ri-1** to **Ri** using the appropriate DH parameters (parameters of row **i** in the DH parameter table). Such matrices are featured below:
 
-T0_1:
-⎡cos(q₁)  -sin(q₁)  0   0  ⎤
-⎢                          ⎥
-⎢sin(q₁)  cos(q₁)   0   0  ⎥
-⎢                          ⎥
-⎢   0        0      1  0.75⎥
-⎢                          ⎥
-⎣   0        0      0   1  ⎦
+TO_1:
+
+![](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bbmatrix%7D%20cos%28q_1%29%20%26%20-sin%28q_1%29%20%26%200%20%26%200%5C%5C%20sin%28q_1%29%20%26%20cos%28q_1%29%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%201%20%26%200.75%5C%5C%200%26%200%20%26%200%20%26%201%20%5Cend%7Bbmatrix%7D)
 
 T1_2:
-⎡sin(q₂)  cos(q₂)   0  0.35⎤
-⎢                          ⎥
-⎢   0        0      1   0  ⎥
-⎢                          ⎥
-⎢cos(q₂)  -sin(q₂)  0   0  ⎥
-⎢                          ⎥
-⎣   0        0      0   1  ⎦
+
+![](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bbmatrix%7D%20sin%28q_%7B2%7D%29%26%20cos%28q_%7B2%7D%29%20%26%200%20%26%200.35%20%5C%5C%200%20%26%200%20%26%201%20%26%200%20%5C%5C%20cos%28q_%7B2%7D%29%20%26%20-sin%28q_%7B2%7D%29%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%200%20%26%201%20%5Cend%7Bbmatrix%7D)
 
 T2_3:
-⎡cos(q₃)  -sin(q₃)  0  1.25⎤
-⎢                          ⎥
-⎢sin(q₃)  cos(q₃)   0   0  ⎥
-⎢                          ⎥
-⎢   0        0      1   0  ⎥
-⎢                          ⎥
-⎣   0        0      0   1  ⎦
+
+![](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bbmatrix%7D%20cos%28q_%7B3%7D%29%20%26%20-sin%28q_%7B3%7D%29%20%26%200%20%26%201.25%5C%5C%20sin%28q_%7B3%7D%29%20%26%20cos%28q_%7B3%7D%29%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%201%20%26%200%5C%5C%200%20%26%200%20%26%200%20%26%201%20%5Cend%7Bbmatrix%7D)
 
 T3_4:
-⎡cos(q₄)   -sin(q₄)  0  -0.054⎤
-⎢                             ⎥
-⎢   0         0      1   1.5  ⎥
-⎢                             ⎥
-⎢-sin(q₄)  -cos(q₄)  0    0   ⎥
-⎢                             ⎥
-⎣   0         0      0    1   ⎦
+
+![](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bbmatrix%7D%20cos%28q_%7B4%7D%29%20%26%20-sin%28q_%7B4%7D%29%20%26%200%20%26%20-0.054%5C%5C%200%20%26%200%20%26%201%20%26%201.5%5C%5C%20-sin%28q_%7B4%7D%29%20%26%20-cos%28q_%7B4%7D%29%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%200%20%26%201%20%5Cend%7Bbmatrix%7D)
 
 T4_5:
-⎡cos(q₅)  -sin(q₅)  0   0⎤
-⎢                        ⎥
-⎢   0        0      -1  0⎥
-⎢                        ⎥
-⎢sin(q₅)  cos(q₅)   0   0⎥
-⎢                        ⎥
-⎣   0        0      0   1⎦
+
+![](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bbmatrix%7D%20cos%28q_%7B5%7D%29%20%26%20-sin%28q_%7B5%7D%29%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%20-1%20%26%200%5C%5C%20sin%28q_%7B5%7D%29%20%26%20cos%28q_%7B5%7D%29%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%200%20%26%201%20%5Cend%7Bbmatrix%7D)
 
 T5_6:
-⎡cos(q₆)   -sin(q₆)  0  0⎤
-⎢                        ⎥
-⎢   0         0      1  0⎥
-⎢                        ⎥
-⎢-sin(q₆)  -cos(q₆)  0  0⎥
-⎢                        ⎥
-⎣   0         0      0  1⎦
+
+![](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bbmatrix%7D%20cos%28q_%7B6%7D%29%20%26%20-sin%28q_%7B6%7D%29%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%201%20%26%200%5C%5C%20-sin%28q_%7B6%7D%29%20%26%20-cos%28q_%7B6%7D%29%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%200%20%26%201%20%5Cend%7Bbmatrix%7D)
 
 T6_7:
-⎡1  0  0    0  ⎤
-⎢              ⎥
-⎢0  1  0    0  ⎥
-⎢              ⎥
-⎢0  0  1  0.303⎥
-⎢              ⎥
-⎣0  0  0    1  ⎦
 
-
-
-
-
+![](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bbmatrix%7D%201%20%26%200%20%26%200%20%26%200%5C%5C%200%20%26%201%20%26%200%20%26%200%5C%5C%200%20%26%200%20%26%201%20%26%200.303%5C%5C%200%20%26%200%20%26%200%20%26%201%20%5Cend%7Bbmatrix%7D)
   
 #### c) FKM model
 Once these matrices were obtained they were multiplied to obtain the pose of the end-effector's frame expressed in the base frame.
