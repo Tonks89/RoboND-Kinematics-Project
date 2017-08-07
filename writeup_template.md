@@ -175,9 +175,13 @@ The first three joint variables (theta1, theta2 and theta3) were computed as fol
 
 First, the wrist center position was computed, given the end-effector pose:
 
+![](https://latex.codecogs.com/gif.latex?w_x%20%3D%20p_x%20-%20%28d_6%20&plus;%20d_7%29n_x)
 
+![](https://latex.codecogs.com/gif.latex?w_y%20%3D%20p_y%20-%20%28d_6%20&plus;%20d_7%29n_y)
 
-Where n represents the z-axis of matrix R0_EE and d_6, d_7 are DH parameters.
+![](https://latex.codecogs.com/gif.latex?w_z%20%3D%20p_z%20-%20%28d_6%20&plus;%20d_7%29n_z)
+
+Where n represents the z-axis of matrix R0_EE.
 
 
 Then, the angles were determined using this information along side the robot's geometric parameters and trigonometric identities:
@@ -191,7 +195,9 @@ Then, the angles were determined using this information along side the robot's g
 
   ![](https://latex.codecogs.com/gif.latex?\theta_2%20%3D%20\pi/2%20-%20A%20-%20alp_1)
 
-  First, the sides of the auxiliary triangle 1 and 2 are computed:
+  The following figure illustrates each of the angles involved in the above computation. To determine them, two auxiliary triangles were used.
+
+  First, the sides of the auxiliary triangle 1 and 2 were computed:
 
   ![](https://latex.codecogs.com/gif.latex?a%20%3D%20%5Csqrt%7Bd_4%5E%7B2%7D%20&plus;%20a_3%5E%7B2%7D%7D)
 
@@ -203,7 +209,7 @@ Then, the angles were determined using this information along side the robot's g
 
   ![](https://latex.codecogs.com/gif.latex?c%20%3D%20a_2)
 
-  Then, the angles of interest are computed
+  Then, the angles of interest were computed:
 
   ![](https://latex.codecogs.com/gif.latex?alp1%20%3D%20%5Ctan%5E%7B-1%7D%28s1/s2%29)
 
@@ -215,7 +221,17 @@ Then, the angles were determined using this information along side the robot's g
 
 * Theta3 computation
 
+  ![](https://latex.codecogs.com/gif.latex?%5Ctheta_3%20%3D%20%5Cpi/2%20-%20B%20-%20%5Cbeta)
 
+  The following figure illustrates each of the angles involved in the above computation. To determine them, three auxiliary triangles were used.
+
+  ![](https://latex.codecogs.com/gif.latex?%5Cgamma%20%3D%20%5Ctan%5E%7B-1%7D%28a_%7B3%7D/g%29)
+
+  ![](https://latex.codecogs.com/gif.latex?f%20%3D%20%5Csqrt%7Bg%5E2%20&plus;%20a_3%5E2%7D)
+
+  ![](https://latex.codecogs.com/gif.latex?%5Cvarepsilon%20%3D%20cos%5E%7B-1%7D%28%28-e%5E2%20&plus;%20a%5E2%20&plus;%20f%5E2%29/%282af%29%29)
+
+  ![](https://latex.codecogs.com/gif.latex?%5Cbeta%20%3D%20%7C%5Cgamma%7C%20-%20%7C%5Cvarepsilon%7C)
 
 
 #### b) Inverse Orientation Kinematics
