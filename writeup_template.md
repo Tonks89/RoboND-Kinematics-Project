@@ -60,14 +60,14 @@ i | alpha(i-1) | a(i-1) | d(i) | theta(i)
 6 | -pi/2 | 0 | 0 | q6
 EE | 0 | 0 | 0.303 | 0
 
-where:
+Where:
 
-* d1 was obtained by adding the distance between joint 0 -> 1 and joint 1 -> 2 along Z in the URDF.
-* a1 corresponds to the distance between joint 1 -> 2 along X in the URDF.
-* a2 corresponds to the distance between joint 2 -> 3 along Z in the URDF.
-* a3 corresponds to the distance between joint 3 -> 4 along Z in the URDF.
-* d4 was obtained by adding the distance between joint 3 -> 4 and joint 4 -> 5 along X in the URDF.
-* d7 was obtained by adding the distance between joint 5 -> 6 and joint 6 -> 7 (or gripper joint) along X in the URDF
+* d1 was obtained by adding the distance between joint 0 -> 1 and joint 1 -> 2 along **Z** in the URDF.
+* a1 corresponds to the distance between joint 1 -> 2 along **X** in the URDF.
+* a2 corresponds to the distance between joint 2 -> 3 along **Z** in the URDF.
+* a3 corresponds to the distance between joint 3 -> 4 along **Z** in the URDF.
+* d4 was obtained by adding the distance between joint 3 -> 4 and joint 4 -> 5 along **X** in the URDF.
+* d7 was obtained by adding the distance between joint 5 -> 6 and joint 6 -> 7 (or gripper joint) along **X** in the URDF
 
 ### PART 2. Forward Kinematic Model (FKM)
 The forward kinematic model consists in expressing the position and orientation (or pose) of the robot's end-effector as function of its joint variables.
@@ -84,17 +84,18 @@ To calculate these matrices for the Kuka KR210 the following function was implem
 
 ``` python
 
-    	# Define Modified DH Transformation matrix         
-    	def Trans_mat(alphaj, aj, di, qi):
-             Tj_i = Matrix([ [       cos(qi),            -sin(qi),                0,                 aj],
-			 [sin(qi)*cos(alphaj),  cos(qi)*cos(alphaj),   -sin(alphaj),    -sin(alphaj)*di],  
-			 [sin(qi)*sin(alphaj),  cos(qi)*sin(alphaj),    cos(alphaj),     cos(alphaj)*di],
-			 [         0,                   0,                   0,                  1]])
-             return Tj_i
+# Define Modified DH Transformation matrix         
+def Trans_mat(alphaj, aj, di, qi):
+     Tj_i = Matrix([ [       cos(qi),            -sin(qi),                0,                 aj],
+		 [sin(qi)*cos(alphaj),  cos(qi)*cos(alphaj),   -sin(alphaj),    -sin(alphaj)*di],  
+		 [sin(qi)*sin(alphaj),  cos(qi)*sin(alphaj),    cos(alphaj),     cos(alphaj)*di],
+		 [         0,                   0,                   0,                  1]])
+     return Tj_i
+
 ```
 
 
-Then this function was called several times to construct the tranformation matrix between the joint frame **Ri-1** to **Ri** using the appropriate DH parameters (parameters of row **i** in the DH parameter table). Such matrices are featured below:
+Then this function was called several times to construct the tranformation matrix between the joint frame **Ri-1** to **Ri** using the appropriate DH parameters (parameters of the ith-row in the DH parameter table). Such matrices are featured below:
 
 T0_1:
 
@@ -161,7 +162,7 @@ R0_EE = R0_EE * R_corr
 
 ```
    
-Note that the angles returned by the function **euler_from_quaternion** are extrinsic euler angles corresponding to an XYZ convention. Thus, the composition of matrices for such convention corresponds to rotation around Z (yaw), followed by a rotation around Y (pitch), and a rotation about X (roll).
+Note that the angles returned by the function **euler_from_quaternion** are extrinsic euler angles corresponding to an **XYZ** convention. Thus, the composition of matrices for such convention corresponds to rotation around **Z** (yaw), followed by a rotation around **Y** (pitch), and a rotation about **X** (roll).
 
 
 
@@ -277,7 +278,39 @@ The previous analysis was implemented as a python script: **IK_server.py**. A sc
     2. If the sine of theta5 is positive or negative, as this influences the computation of theta4 and theta6.
     3. If the angular displacement from one joint position to the next is too large (greater or less than +/- 180 degrees):  When this happens the shortest displacement to the desired joint position is computed and added to the current joint position.
 
-(Code add)
+
+``` python
+
+#--------- 3. Special cases checking -----------
+
+# Check sign of S5
+if sin(theta5) < 0:
+    theta4 = (atan2(-R3_6[2,2],R3_6[0,2])).evalf()
+    theta6 = (atan2(R3_6[1,1],-R3_6[1,0])).evalf()
+    print("-------------> S5 < 0 ")
+
+# Check wrist singularity
+if (theta5 == 0): 
+    theta4 = theta4_prev # keep q4 current value
+    theta46 = atan2(-R3_6[0,1], -R3_6[2,1]).evalf()
+    theta6 = theta46 - theta4
+    print("-------------> A wrist singularity reached!")
+
+# Check large angular displacements
+delta_4 = theta4 - theta4_prev # compute displacement to new angle
+delta_5 = theta5 - theta5_prev
+delta_6 = theta6 - theta6_prev
+
+while delta_4 > pi:                          # check if displacement to large
+    theta4 = theta4_prev + (delta_4  - 2*pi) # if so, compute shorter displacement to same point
+    delta_4 = theta4 - theta4_prev           # check if new difference is small enough
+    print("delta_4 > pi")
+while(delta_4  < -pi):
+    theta4 = theta4_prev + (delta_4  + 2*pi)
+    delta_4 = theta4 - theta4_prev # 
+    print("delta_4 < -pi")
+
+```
 
 To validate the results of this project the robot was tested in 10 pick and place operations (spawn location 1-9, # was repeated). The results show that the robot is able to successfully pick and place the objects *#/10* times while following the desired end-effector trajectories.
 Click here, to see an example of a pick and place operation.
