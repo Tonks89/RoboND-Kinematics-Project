@@ -190,6 +190,7 @@ Then, the angles were determined using this information along side the robot's g
 
   ![](https://latex.codecogs.com/gif.latex?\theta_1%3D%20%5Ctan%20%5E%7B-1%7D%28w_y/w_x%29)
 
+  Note that the atan2 function was used for this and the rest of the inverse tangent computations in the actual code.
 
 * Theta2 computation
 
@@ -233,27 +234,36 @@ Then, the angles were determined using this information along side the robot's g
 
   ![](https://latex.codecogs.com/gif.latex?%5Cbeta%20%3D%20%7C%5Cgamma%7C%20-%20%7C%5Cvarepsilon%7C)
 
+  Where g = 0.96 and e = 0.54.
+
 
 #### b) Inverse Orientation Kinematics
 The final three angles were computed by substituting the first three angles and the known end-effector pose in the following equation, and the solving form matrix R36. A matrix function of angles theta4, theta5 and theta 6 only.
-(code equation R0gripper)
-(code equation R36)
+
+
+https://latex.codecogs.com/gif.latex?_%7B3%7D%5E%7B0%7D%5Ctextrm%7BR%7D%20_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%20%3D%20_%7BEE%7D%5E%7B0%7D%5Ctextrm%7BR%7D
+
+https://latex.codecogs.com/gif.latex?_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%20%3D%20_%7B0%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5C%2C%20_%7BEE%7D%5E%7B0%7D%5Ctextrm%7BR%7D
+
+Where,
+
+https://latex.codecogs.com/gif.latex?_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%20%3D%20%5Cbegin%7Bbmatrix%7D%20-sin%28%5Ctheta_%7B4%7D%29sin%28%5Ctheta_%7B6%7D%29%20&plus;%20cos%28%5Ctheta_%7B4%7D%29cos%28%5Ctheta_%7B5%7D%29cos%28%5Ctheta_%7B6%7D%29%20%26%20-sin%28%5Ctheta_%7B4%7D%29cos%28%5Ctheta_%7B6%7D%29%20-%20sin%28%5Ctheta_%7B6%7D%29cos%28%5Ctheta_%7B4%7D%29cos%28%5Ctheta_%7B5%7D%29%20%26%20-sin%28%5Ctheta_%7B5%7D%29cos%28%5Ctheta_%7B4%7D%29%5C%5C%20sin%28%5Ctheta_%7B5%7D%29cos%28%5Ctheta_%7B6%7D%29%20%26%20-sin%28%5Ctheta_%7B5%7D%29sin%28%5Ctheta_%7B6%7D%29%20%26%20cos%28%5Ctheta_%7B5%7D%29%5C%5C%20-sin%28%5Ctheta_%7B4%7D%29cos%28%5Ctheta_%7B5%7D%29cos%28%5Ctheta_%7B6%7D%29%20-%20sin%28%5Ctheta_%7B6%7D%29cos%28%5Ctheta_%7B4%7D%29%20%26%20sin%28%5Ctheta_%7B4%7D%29sin%28%5Ctheta_%7B6%7D%29cos%28%5Ctheta_%7B5%7D%29%20-%20cos%28%5Ctheta_%7B4%7D%29cos%28%5Ctheta_%7B6%7D%29%20%26%20sin%28%5Ctheta_%7B4%7D%29sin%28%5Ctheta_%7B5%7D%29%20%5Cend%7Bbmatrix%7D
 
 
 Equating the unknown terms on the RHS (right hand side) to the known terms on the LHS (left hand side) resulted in the following equations: 
 
+
 * Theta4 computation
 
-
-
+https://latex.codecogs.com/gif.latex?%5Ctheta_4%20%3D%20%5Ctan%5E%7B-1%7D%5Cleft%20%28%20_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B2%5D%5B2%5D%5C%2C%20/%20-_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B0%5D%5B2%5D%20%5Cright%20%29
 
 * Theta5 computation
 
-
-
-
+https://latex.codecogs.com/gif.latex?%5Ctheta_5%20%3D%20%5Ctan%5E%7B-1%7D%5Cleft%20%28%20%5Cleft%20%28%5Csqrt%7B%28_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B0%5D%5B2%5D%29%5E2%20&plus;%20%28_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B2%5D%5B2%5D%29%5E2%7D%20%5Cright%20%29/_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B1%5D%5B2%5D%20%5Cright%20%29
 
 * Theta6 computation
+
+https://latex.codecogs.com/gif.latex?%5Ctheta_6%20%3D%20%5Ctan%5E%7B-1%7D%5Cleft%20%28%20-_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B1%5D%5B1%5D%20%5C%2C%20/%5C%2C%20_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B1%5D%5B0%5D%20%5Cright%20%29
 
 ---
 ## Project Implementation
