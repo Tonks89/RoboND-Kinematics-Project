@@ -171,7 +171,7 @@ The inverse kinematic model consists in computing the joint positions given the 
 
 Since the robot has a spherical wrist the IK problem can be divided into two parts: The inverse p0osition kinematics problem and the inverse orientation kinematics problem. The former is used to compute the first three joint values (which determine the position of the end-effector), while the latter is used to compute the last three joint values (which determine the orientation of the end-effector.
 
-#### a) Inverse Position Kinematics
+#### 1) Inverse Position Kinematics
 The first three joint variables (theta1, theta2 and theta3) were computed as follows:
 
 First, the wrist center position was computed, given the end-effector pose:
@@ -238,7 +238,7 @@ Then, the angles were determined using this information along side the robot's g
   Where g = 0.96 and e = 0.54.
 
 
-#### b) Inverse Orientation Kinematics
+#### 2) Inverse Orientation Kinematics
 The final three angles were computed by substituting the first three angles and the known end-effector pose in the following equation, and the solving form matrix R36. A matrix function of angles theta4, theta5 and theta 6 only.
 
 
@@ -266,17 +266,15 @@ Equating the unknown terms on the RHS (right hand side) to the known terms on th
 
 ![](https://latex.codecogs.com/gif.latex?%5Ctheta_6%20%3D%20%5Ctan%5E%7B-1%7D%5Cleft%20%28%20-_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B1%5D%5B1%5D%20%5C%2C%20/%5C%2C%20_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B1%5D%5B0%5D%20%5Cright%20%29)
 
----
-## Project Implementation
 
-The previous analysis was implemented as a python script: **IK_server.py**. A script which calculates the joint trajectories corresponding to desired end-effector poses. The code is divided into two main sections: forward kinematics and inverse kinematics.
+### 3) Special Cases Checking
+The previous equations were used to compute the joint trajectories corresponding to the desired end-effector position. However, there are special cases in which the computations have to be handled differently. Such cases are outlined below:
 
-* The forward kinematics section contains the implementation of PART 1 (Robot geometry and DH parameters) and PART 2 (Forward Kinematic Model (FKM)) of the previous analysis.
-* The inverse kinematics section contains the implementation of PART 3 (Inverse Kinematic Model (IKM)) of the previous analysis. Additionally, this part of the code also checks for the following special cases:
+* Wrist singularities (when theta5 = 0, and theta4 and 6 become collinear): When this happens the values of joint 4 and 6 cannot be determined separately, only their sum (theta46). Thus, theta4 is assigned its previous value and theta6 is set to theta46 minus the current value of theta4. 
 
-    1. If a wrist singularity occured (when theta5 = 0, and theta4 and 6 become collinear): When this happens the values of joint 4 and 6 cannot be determined separately, only their sum (theta46). Thus, theta4 is assigned its previous value and theta6 is set to theta46 minus the  current value of theta4. 
-    2. If the sine of theta5 is positive or negative, as this influences the computation of theta4 and theta6.
-    3. If the angular displacement from one joint position to the next is too large (greater or less than +/- 180 degrees):  When this happens the shortest displacement to the desired joint position is computed and added to the current joint position.
+* Negative sine of theta5: this influences the computation of theta4 and theta6. Thus, their computations are altered accordingly.
+
+* Large angular displacements from one joint position to the next (greater or less than +/- 180 degrees):  When this happens the shortest displacement to the desired joint position is computed and added to the current joint position.
 
 The following code shows this special cases checking:
 
@@ -315,13 +313,22 @@ while(delta_4  < -pi):
 
 ```
 
+
+---
+## Project Implementation
+
+The previous analysis was implemented as a python script: **IK_server.py**. A script which calculates the joint trajectories corresponding to desired end-effector poses. The code is divided into two main sections: forward kinematics and inverse kinematics.
+
+* The forward kinematics section contains the implementation of PART 1 (Robot geometry and DH parameters) and PART 2 (Forward Kinematic Model (FKM)) of the previous analysis.
+* The inverse kinematics section contains the implementation of PART 3 (Inverse Kinematic Model (IKM)) of the previous analysis. 
+
 To validate the results of this project the robot was tested in 10 pick and place operations (spawn locations 1-9, # was repeated). The results show that the robot is able to successfully pick and place the objects *#/10* times while following the desired end-effector trajectories.
 Click here, to see an example of a pick and place operation.
 
-However, there are a number of improvements that I still wish to implement:
+There are a number of improvements that I still wish to implement:
 
 * Reduce unecessary end-effector rotations: Although I check for large and uncessary angular displacements, the robot still exhibits some unecessary rotations, especially in the beginning. I will keep checking and improving this part of the code.
-* In 2/10 occasions the orientation of the robot did not reach the desired end-effector pose at the dropping site. I still need to determine the cause of this. I noticed in both occasions the code for checking large angular displacements was executed, so I'll try to determine if the error happens here or somewhere else.
+* In 2/10 occasions the desired end-effector pose at the dropping site was not reached. I still need to determine the cause of this. I noticed in both occasions the code for checking large angular displacements was executed, so I'll try to determine if the error happens here or somewhere else.
 
 Other improvements I would like to make:
 * Optimize the code to make it faster
