@@ -4,9 +4,6 @@
 
 [//]: # (Image References)
 
-
-[pr_video]: .output/mydata_mapping_final
-
 [image1]: ./misc_images/kuka_geometry_DH.png
 [image2]: ./misc_images/Theta1.png
 [image3]: ./misc_images/Theta2.png
@@ -230,11 +227,9 @@ Then, the angles were determined using this information along side the robot's g
 
   ![](https://latex.codecogs.com/gif.latex?%5Ctheta_3%20%3D%20%5Cpi/2%20-%20B%20-%20%5Cbeta)
 
-  The following figure illustrates each of the angles involved in the above computation. 
+  The following figure illustrates each of the angles involved in the above computation. To determine them, three auxiliary triangles were used.
 
   ![alt text][image4]
-
-  To determine them, three auxiliary triangles were used.
 
 
   ![](https://latex.codecogs.com/gif.latex?%5Cgamma%20%3D%20%5Ctan%5E%7B-1%7D%28a_%7B3%7D/g%29)
