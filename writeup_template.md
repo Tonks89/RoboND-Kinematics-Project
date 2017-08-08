@@ -267,7 +267,7 @@ Equating the unknown terms on the RHS (right hand side) to the known terms on th
 ![](https://latex.codecogs.com/gif.latex?%5Ctheta_6%20%3D%20%5Ctan%5E%7B-1%7D%5Cleft%20%28%20-_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B1%5D%5B1%5D%20%5C%2C%20/%5C%2C%20_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%5B1%5D%5B0%5D%20%5Cright%20%29)
 
 
-### 3) Special Cases Checking
+#### 3) Special Cases Checking
 The previous equations were used to compute the joint trajectories corresponding to the desired end-effector position. However, there are special cases in which the computations have to be handled differently. Such cases are outlined below:
 
 * Wrist singularities (when theta5 = 0, and theta4 and 6 become collinear): When this happens the values of joint 4 and 6 cannot be determined separately, only their sum (theta46). Thus, theta4 is assigned its previous value and theta6 is set to theta46 minus the current value of theta4. 
