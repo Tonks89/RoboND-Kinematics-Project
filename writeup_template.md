@@ -4,12 +4,13 @@
 
 [//]: # (Image References)
 
-[pr_image1]: ./misc/pr_image1.png
-[pr_image0]: ./misc/pr_image0.png
-[pr_image2]: ./misc/pr_image2.png
-[pr_image3]: ./misc/pr_image3.png
-[nav_image0]: ./misc/nav_image.png
+
 [pr_video]: .output/mydata_mapping_final
+
+[image1]: ./misc_images/kuka_geometry_DH.png
+[image2]: ./misc_images/Theta1.png
+[image3]: ./misc_images/Theta2.png
+[image4]: ./misc_images/Theta3.png
 
 ## Introduction
 The objective of this project was to write an Inverse Kinematics solver for the KUKA KR210 robot. This solver is responsible for computing the joint angles corresponding to a desired end-effector or gripper trajectory. The algorithm was tested on pick and place operations, consisting of collecting objects from different locations on a shelf and depositing them on a bin.
@@ -23,7 +24,7 @@ The objective of this project was to write an Inverse Kinematics solver for the 
 
 The following scheme shows the Kuka Kuka KR210 and its geometric parameters.
 
-(picture)
+![alt text][image1]
 
 In this figure, each joint is assigned an origin (**Oi**) and frame (**Zi** and **Xi**). The position and orientation of each joint from the base to the end-effector is described by a series of geometric parameters (**alpha**, **a**, **d**, **theta**), but only **a** and **d** are depicted here, where:
 
@@ -187,9 +188,11 @@ Where n represents the z-axis of matrix R0_EE.
 
 Then, the angles were determined using this information along side the robot's geometric parameters and trigonometric identities:
 
-* Theta1 computation (drawings, code formulas)
+* Theta1 computation 
 
   ![](https://latex.codecogs.com/gif.latex?\theta_1%3D%20%5Ctan%20%5E%7B-1%7D%28w_y/w_x%29)
+  
+  ![alt text][image2]
 
   Note that the atan2 function was used for this and the rest of the inverse tangent computations in the actual code.
 
@@ -198,6 +201,8 @@ Then, the angles were determined using this information along side the robot's g
   ![](https://latex.codecogs.com/gif.latex?\theta_2%20%3D%20\pi/2%20-%20A%20-%20alp_1)
 
   The following figure illustrates each of the angles involved in the above computation. To determine them, two auxiliary triangles were used.
+
+  ![alt text][image3]
 
   First, the sides of the auxiliary triangle 1 and 2 were computed:
 
@@ -226,6 +231,8 @@ Then, the angles were determined using this information along side the robot's g
   ![](https://latex.codecogs.com/gif.latex?%5Ctheta_3%20%3D%20%5Cpi/2%20-%20B%20-%20%5Cbeta)
 
   The following figure illustrates each of the angles involved in the above computation. To determine them, three auxiliary triangles were used.
+
+  ![alt text][image4]
 
   ![](https://latex.codecogs.com/gif.latex?%5Cgamma%20%3D%20%5Ctan%5E%7B-1%7D%28a_%7B3%7D/g%29)
 
