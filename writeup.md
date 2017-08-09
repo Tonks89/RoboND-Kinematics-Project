@@ -25,7 +25,7 @@ The following scheme shows the Kuka Kuka KR210 and its geometric parameters.
 
 ![alt text][image1]
 
-In this figure, each joint is assigned an origin (**Oi**) and frame (**Zi** and **Xi**). The position and orientation of each joint from the base to the end-effector is described by a series of geometric parameters (**alpha**, **a**, **d**, **theta**), but only **a** and **d** are depicted here, where:
+In this figure, each joint is assigned an origin (**Oi**) and frame (**Zi** and **Xi**). The position and orientation of each joint from the base to the end-effector is described by a series of geometric parameters (**alpha**, **a**, **d**, **theta**), but only **a** and **d** are depicted here:
 
 * The angle **alpha** corresponds to the angle between **Zi-i** and **Zi** along **Xi-1**.
 
@@ -47,8 +47,8 @@ i | alpha(i-1) | a(i-1) | d(i) | theta(i)
 6 | -pi/2 | 0 | 0 | q6
 EE | 0 | 0 | d7 | 0
 
-The actual numerical values for these paramaters can be extracted from the robots URDF file.
-This file contains the distances and orientations between joint frames, however, one must be careful when extracting this information, since the the URDF frames do not correspond to our DH convention.
+The actual numerical values for these paramaters can be extracted from the robot's URDF file.
+This file contains the distances and orientations between joint frames, however, one must be careful when extracting this information since the the URDF frames do not correspond to our DH convention.
 
 i | alpha(i-1) | a(i-1) | d(i) | theta(i)
 --- | --- | --- | --- | ---
@@ -95,7 +95,7 @@ def Trans_mat(alphaj, aj, di, qi):
 ```
 
 
-Then this function was called several times to construct the tranformation matrix between the joint frame **Ri-1** to **Ri** using the appropriate DH parameters (parameters of the ith-row in the DH parameter table). Such matrices are featured below:
+Then, this function was called several times to construct the tranformation matrix between the joint frame **Ri-1** to **Ri** using the appropriate DH parameters (parameters of the ith-row in the DH parameter table). Such matrices are featured below:
 
 T0_1:
 
@@ -153,7 +153,7 @@ pz = req.poses[x].position.z
 
 
 # Gripper w.r.t to base (R0_7 or R0_EE)
-    R0_EE = rotz(yaw) * roty(pitch) * rotx(roll) 		      
+R0_EE = rotz(yaw) * roty(pitch) * rotx(roll) 		      
 
 
 #  Apply correction (urdf frame is different)
@@ -167,9 +167,9 @@ Note that the angles returned by the function **euler_from_quaternion** are extr
 
 
 ### PART 3. Inverse Kinematic Model (IKM)
-The inverse kinematic model consists in computing the joint positions given the position of the end-effector. This part of the analysis is the most important for this project because it will allow us to compute the trajectories in the joint that correspond to the task space trajectories given by the motion planner.
+The inverse kinematic model consists in computing the joint positions given the position of the end-effector. This part of the analysis is the most important because it will allow us to compute the *joint space* trajectories that correspond to the *task space trajectories* given by the motion planner.
 
-Since the robot has a spherical wrist the IK problem can be divided into two parts: The inverse p0osition kinematics problem and the inverse orientation kinematics problem. The former is used to compute the first three joint values (which determine the position of the end-effector), while the latter is used to compute the last three joint values (which determine the orientation of the end-effector.
+Since the robot has a spherical wrist the IK problem can be divided into two parts: The *inverse position kinematics* problem and the *inverse orientation* kinematics problem. The former is used to compute the first three joint values (which determine the position of the end-effector), while the latter is used to compute the last three joint values (which determine the orientation of the end-effector).
 
 #### 1) Inverse Position Kinematics
 The first three joint variables (theta1, theta2 and theta3) were computed as follows:
@@ -246,7 +246,7 @@ Then, the angles were determined using this information along side the robot's g
 
 
 #### 2) Inverse Orientation Kinematics
-The final three angles were computed by substituting the first three angles and the known end-effector pose in the following equation, and the solving form matrix R36. A matrix function of angles theta4, theta5 and theta 6 only.
+The final three angles were computed by substituting the first three angles and the known end-effector pose in the following equation, and the solving for matrix R36. Note that matrix R36 is function of angles theta4, theta5 and theta6 only.
 
 
 ![](https://latex.codecogs.com/gif.latex?_%7B3%7D%5E%7B0%7D%5Ctextrm%7BR%7D%20_%7B6%7D%5E%7B3%7D%5Ctextrm%7BR%7D%20%3D%20_%7BEE%7D%5E%7B0%7D%5Ctextrm%7BR%7D)
@@ -339,9 +339,9 @@ Furthermore, there are a number of improvements that I still wish to implement:
 * In 2/10 occasions the desired end-effector pose at the dropping site was not reached. I still need to determine the cause of this. I noticed that in both occasions the code for checking large angular displacements was executed, so I'll try to determine if the error happens here or somewhere else.
 
 Other improvements I would like to make:
-* Optimize the code to make it faster
+* Optimize the code to make it faster.
 * Compute the various IKM solutions for each end-effector position and select the best one (to stay within the robot's reachable workspace, avoid singularities etc.)
-* I noticed that when the robot needs to move from point A to B (once the IKM solver has finished its computations), the motion is slow and not fluid. I think this could be either due to the fact that more points are needed along the trajectory or to the fact that my virtual machine has low graphics performance as pointed out by the following message: "No 3D support available from the host, hardware graphics acceleration is not available".
+* I noticed that when the robot needs to move from point A to B (once the IKM solver has finished its computations), the motion is slow and not fluid. I think this could be either due to the fact that more points are needed along the trajectory and/or to the fact that my virtual machine has low graphics performance as pointed out by the following message: "No 3D support available from the host, hardware graphics acceleration is not available".
 
 
 

@@ -167,7 +167,7 @@ def test_code(test_case):
 
     #  Apply correction (urdf frame is different)
     R_corr = rotz(pi) * roty(-pi/2)
-    R0_EE = R0_EE * R_corr   # before i had transp., whis supposedly gives same result **!**
+    R0_EE = R0_EE * R_corr   
 
 
 
@@ -264,9 +264,10 @@ def test_code(test_case):
     pprint(R0_EE)
     print("Resulting Orientation (when using IKM results)")
     pprint(T_FKnum)
-    print("........... theta4  is type...................")
+    print("........... thetas...................")
     print(theta1, theta2, theta3, theta4, theta5, theta6)
-    print(type(theta4))
+
+
     ## End your code input for forward kinematics here!
 
     ########################################################################################
